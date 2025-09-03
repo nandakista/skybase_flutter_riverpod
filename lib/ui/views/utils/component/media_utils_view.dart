@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skybase/core/helper/bottom_sheet_helper.dart';
 import 'package:skybase/config/base/main_navigation.dart';
 import 'package:skybase/ui/widgets/media/attachments_source_bottom_sheet.dart';
@@ -9,21 +10,23 @@ import 'package:skybase/ui/widgets/sky_appbar.dart';
 import 'package:skybase/ui/widgets/sky_button.dart';
 import 'package:skybase/ui/widgets/sky_image.dart';
 
-class MediaUtilsView extends StatefulWidget {
+class MediaUtilsView extends ConsumerStatefulWidget {
   static const String route = 'media';
 
   const MediaUtilsView({super.key});
 
   @override
-  State<MediaUtilsView> createState() => _MediaUtilsViewState();
+  ConsumerState<MediaUtilsView> createState() => _MediaUtilsViewState();
 }
 
-class _MediaUtilsViewState extends State<MediaUtilsView> {
+class _MediaUtilsViewState extends ConsumerState<MediaUtilsView> {
   File? imageFile;
   List<File> pickedImages = [];
 
   @override
   Widget build(BuildContext context) {
+    final Navigation navigation = ref.read(navigationProvider);
+
     return Scaffold(
       appBar: SkyAppBar.primary(title: 'Media Utility'),
       body: SingleChildScrollView(
@@ -31,7 +34,7 @@ class _MediaUtilsViewState extends State<MediaUtilsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ..._buildImagePicker(context),
+            ..._buildImagePicker(context, navigation),
             const Divider(thickness: 1, height: 36),
             const SkyImage(),
             const Divider(thickness: 1, height: 36),
@@ -66,7 +69,7 @@ class _MediaUtilsViewState extends State<MediaUtilsView> {
     );
   }
 
-  List<Widget> _buildImagePicker(BuildContext context) {
+  List<Widget> _buildImagePicker(BuildContext context, Navigation navigation) {
     return [
       const Text('Preview File'),
       const SizedBox(height: 4),
@@ -74,12 +77,12 @@ class _MediaUtilsViewState extends State<MediaUtilsView> {
         child: imageFile != null
             ? SkyImage(
                 src: imageFile!.path,
-                height: MediaQuery.of(context).size.width * 1 / 2,
-                width: MediaQuery.of(context).size.width * 2 / 3,
+                height: MediaQuery.sizeOf(context).width * 1 / 2,
+                width: MediaQuery.sizeOf(context).width * 2 / 3,
               )
             : SizedBox(
-                height: MediaQuery.of(context).size.width * 1 / 2,
-                width: MediaQuery.of(context).size.width * 1 / 2,
+                height: MediaQuery.sizeOf(context).width * 1 / 2,
+                width: MediaQuery.sizeOf(context).width * 1 / 2,
                 child: Card(
                   elevation: 5,
                   shape: RoundedRectangleBorder(
@@ -105,7 +108,7 @@ class _MediaUtilsViewState extends State<MediaUtilsView> {
                 setState(() {
                   imageFile = file;
                 });
-                Navigation.instance.pop(context);
+                navigation.pop(context);
               },
               onMultipleAttachmentsSelected: (List<File> files) {},
             ),

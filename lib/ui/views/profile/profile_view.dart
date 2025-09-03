@@ -20,6 +20,7 @@ class ProfileView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(profileNotifierProvider);
     final notifier = ref.read(profileNotifierProvider.notifier);
+    final Navigation navigation = ref.read(navigationProvider);
 
     return Scaffold(
         appBar: AppBar(
@@ -28,7 +29,7 @@ class ProfileView extends ConsumerWidget {
           actions: [
             IconButton(
               onPressed: () =>
-                  Navigation.instance.push(context, SettingView.route),
+                  navigation.push(context, SettingView.route),
               icon: Icon(
                 CupertinoIcons.settings,
                 color: Theme.of(context).iconTheme.color,

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skybase/config/base/main_navigation.dart';
 import 'package:skybase/ui/widgets/platform_loading_indicator.dart';
 import 'package:skybase/ui/widgets/sky_dialog.dart';
@@ -28,7 +29,7 @@ class LoadingDialog {
     );
   }
 
-  static void dismiss(BuildContext context) => Navigation.instance.pop(context);
+  static void dismiss(BuildContext context) => context.pop();
 }
 
 class DialogHelper {
@@ -153,5 +154,5 @@ class DialogHelper {
     );
   }
 
-  static void dismiss(BuildContext context) => Navigation.instance.pop(context);
+  static void dismiss(BuildContext context) => context.pop();
 }

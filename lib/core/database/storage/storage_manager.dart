@@ -8,11 +8,6 @@ import 'package:skybase/core/database/storage/storage_key.dart';
    nanda.kista@gmail.com
 */
 
-// final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {
-//   final prefs = await SharedPreferences.getInstance();
-//   return prefs;
-// });
-
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError();
 });

@@ -45,10 +45,6 @@ class SampleFeatureListNotifier extends StateNotifier<PaginationState> {
     pagingController.refresh();
   }
 
-  void updateSearch({required String? search}) {
-    state = state.copyWith(page: 1, search: search, hasMore: true);
-  }
-
   @override
   void dispose() {
     cancelToken.cancel();

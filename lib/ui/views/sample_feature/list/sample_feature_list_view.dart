@@ -67,6 +67,7 @@ class _SampleFeatureListViewState extends ConsumerState<SampleFeatureListView>
   Widget build(BuildContext context) {
     super.build(context);
     final notifier = ref.read(sampleFeatureListNotifierProvider.notifier);
+    final Navigation navigation = ref.read(navigationProvider);
 
     return Scaffold(
       appBar: SkyAppBar.secondary(title: 'txt_list_users'.tr()),
@@ -79,7 +80,7 @@ class _SampleFeatureListViewState extends ConsumerState<SampleFeatureListView>
         itemBuilder: (BuildContext context, item, int index) {
           return ListTile(
             onTap: () {
-              Navigation.instance.push(
+              navigation.push(
                 context,
                 SampleFeatureDetailView.route,
                 arguments: {

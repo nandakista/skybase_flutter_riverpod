@@ -15,9 +15,7 @@ import 'ui/views/404_500/crash_error_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  await ServiceLocator.init();
-
-
+  await Initializer.init();
   final sharedPreferences = await SharedPreferences.getInstance();
 
   runApp(

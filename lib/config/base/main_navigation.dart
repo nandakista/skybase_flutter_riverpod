@@ -4,15 +4,20 @@
 */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skybase/service_locator.dart';
 import 'package:skybase/ui/routes/app_routes.dart';
+
+final navigationProvider = Provider<Navigation>((ref) {
+  return Navigation();
+});
 
 /// Base Class yang digunakan untuk navigation. Class ditujukan
 /// untuk mempermudah jika ingin mengganti lib routing nya, sehingga hanya perlu
 /// diubah di class ini saja
 class Navigation {
-  static Navigation get instance => sl<Navigation>();
+  // static Navigation get instance => sl<Navigation>();
 
   void push<T extends Object?>(
     BuildContext context,

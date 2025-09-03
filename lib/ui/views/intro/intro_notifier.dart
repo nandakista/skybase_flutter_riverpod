@@ -52,7 +52,7 @@ class IntroNotifier extends StateNotifier<IntroState> {
     );
   }
 
-  void onNextPage(BuildContext context) {
+  void onNextPage(BuildContext context, Navigation navigation) {
     if (!state.isLastPage) {
       state.pageController.nextPage(
         curve: Curves.easeIn,
@@ -60,7 +60,7 @@ class IntroNotifier extends StateNotifier<IntroState> {
       );
     } else {
       storageManager.save(StorageKey.FIRST_INSTALL, false);
-      Navigation.instance.push(context, LoginView.route);
+      navigation.push(context, LoginView.route);
     }
   }
 }

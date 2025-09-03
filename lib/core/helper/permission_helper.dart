@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:skybase/config/base/main_navigation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skybase/core/helper/dialog_helper.dart';
 
 class PermissionHelper {
@@ -14,7 +14,7 @@ class PermissionHelper {
       cancelText: 'txt_back'.tr(),
       onConfirm: openAppSettings,
       onCancel: () {
-        Navigation.instance.pop(context);
+        context.pop();
       },
     );
   }
@@ -26,7 +26,7 @@ class PermissionHelper {
       message: message,
       confirmText: 'txt_back'.tr(),
       onConfirm: () {
-        Navigation.instance.pop(context);
+        context.pop();
       },
     );
   }

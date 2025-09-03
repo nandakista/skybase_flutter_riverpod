@@ -4,6 +4,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:skybase/config/base/main_navigation.dart';
@@ -15,7 +17,7 @@ import 'package:skybase/core/helper/permission_helper.dart';
    Varcant
    nanda.kista@gmail.com
 */
-class AttachmentsSourceBottomSheet extends StatelessWidget {
+class AttachmentsSourceBottomSheet extends ConsumerWidget {
   final BuildContext pageContext;
   final double? maxHeight;
   final double? maxWidth;
@@ -59,14 +61,15 @@ class AttachmentsSourceBottomSheet extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Navigation navigation = ref.read(navigationProvider);
     return Wrap(
       children: <Widget>[
         ListTile(
           leading: cameraIcon,
           title: cameraLabel ?? Text('txt_camera'.tr()),
           onTap: () {
-            Navigation.instance.pop(context);
+            navigation.pop(context);
             _onPickImage(pageContext, ImageSource.camera);
           },
         ),
@@ -74,7 +77,7 @@ class AttachmentsSourceBottomSheet extends StatelessWidget {
           leading: galleryIcon,
           title: galleryLabel ?? Text('txt_gallery'.tr()),
           onTap: () {
-            Navigation.instance.pop(context);
+            navigation.pop(context);
             _onPickImage(pageContext, ImageSource.gallery);
           },
         ),
@@ -83,7 +86,7 @@ class AttachmentsSourceBottomSheet extends StatelessWidget {
             leading: fileIcon,
             title: fileLabel ?? Text('txt_document'.tr()),
             onTap: () {
-              Navigation.instance.pop(context);
+              navigation.pop(context);
               _onPickFile(pageContext);
             },
           ),
@@ -184,7 +187,7 @@ class AttachmentsSourceBottomSheet extends StatelessWidget {
         );
       }
       onAttachmentsSelected(imageFile);
-      if (context.mounted) Navigation.instance.pop(context);
+      if (context.mounted) context.pop(context);
     }
   }
 
@@ -195,7 +198,7 @@ class AttachmentsSourceBottomSheet extends StatelessWidget {
       imageQuality: imageQuality,
     );
     onMultipleAttachmentsSelected(result.map((e) => File(e.path)).toList());
-    if (context.mounted) Navigation.instance.pop(context);
+    if (context.mounted) context.pop();
   }
 
   Future<void> _onPickFile(BuildContext context) async {
@@ -206,6 +209,6 @@ class AttachmentsSourceBottomSheet extends StatelessWidget {
         ) ??
         [];
     onMultipleAttachmentsSelected(result);
-    if (context.mounted) Navigation.instance.pop(context);
+    if (context.mounted) context.pop(context);
   }
 }

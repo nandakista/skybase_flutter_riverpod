@@ -1,19 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skybase/config/base/main_navigation.dart';
 import 'package:skybase/core/helper/bottom_sheet_helper.dart';
 import 'package:skybase/ui/widgets/media/attachments_source_bottom_sheet.dart';
 import 'package:skybase/ui/widgets/sky_appbar.dart';
 import 'package:skybase/ui/widgets/sky_button.dart';
 
-class BottomSheetUtilsView extends StatelessWidget {
+class BottomSheetUtilsView extends ConsumerWidget {
   static const String route = 'bottom-sheet';
 
   const BottomSheetUtilsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Navigation navigation = ref.read(navigationProvider);
+
     return Scaffold(
       appBar: SkyAppBar.primary(title: 'Bottom Sheet Utility'),
       body: SingleChildScrollView(
@@ -32,7 +35,7 @@ class BottomSheetUtilsView extends StatelessWidget {
               onPressed: () {
                 BottomSheetHelper.basic(
                   context: context,
-                  child: _imageSource(context),
+                  child: _imageSource(context, navigation),
                 );
               },
             ),
@@ -42,7 +45,7 @@ class BottomSheetUtilsView extends StatelessWidget {
               onPressed: () {
                 BottomSheetHelper.rounded(
                   context: context,
-                  child: _imageSource(context),
+                  child: _imageSource(context, navigation),
                 );
               },
             ),
@@ -52,7 +55,7 @@ class BottomSheetUtilsView extends StatelessWidget {
               onPressed: () {
                 BottomSheetHelper.bar(
                   context: context,
-                  child: _imageSource(context),
+                  child: _imageSource(context, navigation),
                 );
               },
             ),
@@ -62,7 +65,7 @@ class BottomSheetUtilsView extends StatelessWidget {
               onPressed: () {
                 BottomSheetHelper.cupertino(
                   context: context,
-                  child: _imageSource(context),
+                  child: _imageSource(context, navigation),
                 );
               },
             ),
@@ -72,7 +75,7 @@ class BottomSheetUtilsView extends StatelessWidget {
               onPressed: () {
                 BottomSheetHelper.material(
                   context: context,
-                  child: _imageSource(context),
+                  child: _imageSource(context, navigation),
                 );
               },
             ),
@@ -82,13 +85,13 @@ class BottomSheetUtilsView extends StatelessWidget {
     );
   }
 
-  Widget _imageSource(BuildContext context) {
+  Widget _imageSource(BuildContext context, Navigation navigation) {
     return AttachmentsSourceBottomSheet(
       pageContext: context,
       enabledFileSource: false,
       onAttachmentsSelected: (file) {
         // controller.selectedProof.value = image;
-        Navigation.instance.pop(context);
+        navigation.pop(context);
       },
       onMultipleAttachmentsSelected: (List<File> files) {},
     );

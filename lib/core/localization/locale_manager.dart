@@ -47,7 +47,7 @@ class LocaleStateNotifier extends StateNotifier<Locale> {
     await WidgetsBinding.instance.performReassemble();
   }
 
-  void showLocaleDialog(BuildContext context) {
+  void showLocaleDialog(BuildContext context, Navigation navigation) {
     showDialog(
       context: context,
       builder: (context) {
@@ -70,7 +70,7 @@ class LocaleStateNotifier extends StateNotifier<Locale> {
                   onTap: () {
                     final locale = locales.entries.toList()[index].value;
                     updateLocale(context, locale);
-                    Navigation.instance.pop(context);
+                    navigation.pop(context);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(10),

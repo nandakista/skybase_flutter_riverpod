@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skybase/config/base/main_navigation.dart';
 import 'package:skybase/config/themes/app_colors.dart';
 import 'package:skybase/ui/views/intro/intro_data.dart';
 import 'package:skybase/ui/views/intro/intro_notifier.dart';
@@ -16,6 +17,8 @@ class IntroView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final introState = ref.watch(introNotifierProvider);
     final notifier = ref.read(introNotifierProvider.notifier);
+    final Navigation navigation = ref.read(navigationProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -94,7 +97,7 @@ class IntroView extends ConsumerWidget {
                     child: Visibility(
                       visible: introState.isLastPage,
                       child: GestureDetector(
-                        onTap: () => notifier.onNextPage(context),
+                        onTap: () => notifier.onNextPage(context, navigation),
                         child: const Text(
                           "Done",
                           style: TextStyle(color: AppColors.primary),

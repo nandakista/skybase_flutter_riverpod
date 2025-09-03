@@ -18,10 +18,13 @@ final authManagerProvider = StateNotifierProvider<AuthManager, AppType>((ref) {
   final themeManager = ref.read(themeManagerProvider.notifier);
   final storageManager = ref.read(storageManagerProvider);
   final secureStorage = ref.read(secureStorageManagerProvider);
+  final navigation = ref.read(navigationProvider);
   return AuthManager(
-      storage: storageManager,
-      secureStorage: secureStorage,
-      themeManager: themeManager);
+    storage: storageManager,
+    secureStorage: secureStorage,
+    themeManager: themeManager,
+    navigation: navigation,
+  );
 });
 
 enum AppType { INITIAL, FIRST_INSTALL, UNAUTHENTICATED, AUTHENTICATED }
@@ -30,11 +33,13 @@ class AuthManager extends StateNotifier<AppType> {
   final StorageManager storage;
   final SecureStorageManager secureStorage;
   final ThemeManager themeManager;
+  final Navigation navigation;
 
   AuthManager({
     required this.storage,
     required this.secureStorage,
     required this.themeManager,
+    required this.navigation,
   }) : super(AppType.INITIAL) {
     _init();
   }
@@ -153,13 +158,13 @@ class AuthManager extends StateNotifier<AppType> {
       case AppType.INITIAL:
         break;
       case AppType.FIRST_INSTALL:
-        Navigation.instance.pushAllReplacementNoContext(IntroView.route);
+        navigation.pushAllReplacementNoContext(IntroView.route);
         break;
       case AppType.UNAUTHENTICATED:
-        Navigation.instance.pushAllReplacementNoContext(LoginView.route);
+        navigation.pushAllReplacementNoContext(LoginView.route);
         break;
       case AppType.AUTHENTICATED:
-        Navigation.instance.pushAllReplacementNoContext(MainNavView.route);
+        navigation.pushAllReplacementNoContext(MainNavView.route);
         break;
     }
   }
