@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:skybase/config/base/main_navigation.dart';
+import 'package:skybase/config/base/navigation.dart';
 import 'package:skybase/config/themes/app_colors.dart';
 import 'package:skybase/ui/views/intro/intro_data.dart';
 import 'package:skybase/ui/views/intro/intro_notifier.dart';

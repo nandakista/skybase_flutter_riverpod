@@ -8,7 +8,7 @@ import 'package:skybase/core/database/storage/storage_manager.dart';
 import 'package:skybase/core/database/secure_storage/secure_storage_manager.dart';
 import 'package:skybase/core/database/storage/cache_data.dart';
 import 'package:skybase/data/models/user/user.dart';
-import 'package:skybase/config/base/main_navigation.dart';
+import 'package:skybase/config/base/navigation.dart';
 import 'package:skybase/ui/views/intro/intro_view.dart';
 import 'package:skybase/ui/views/login/login_view.dart';
 import 'package:skybase/ui/views/main_navigation/main_nav_view.dart';

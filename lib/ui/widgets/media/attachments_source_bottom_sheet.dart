@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:skybase/config/base/main_navigation.dart';
+import 'package:skybase/config/base/navigation.dart';
 import 'package:skybase/core/helper/file_helper.dart';
 import 'package:skybase/core/helper/media_helper.dart';
 import 'package:skybase/core/helper/permission_helper.dart';
