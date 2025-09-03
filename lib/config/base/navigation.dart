@@ -6,7 +6,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:skybase/service_locator.dart';
 import 'package:skybase/ui/routes/app_routes.dart';
 
 final navigationProvider = Provider<Navigation>((ref) {

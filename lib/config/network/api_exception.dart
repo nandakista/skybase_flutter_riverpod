@@ -55,7 +55,6 @@ mixin NetworkException implements Exception {
       try {
         NetworkExceptionData networkExceptions;
         if (error is DioException) {
-          print('dio type ${error.type}');
           networkExceptions = switch (error.type) {
             DioExceptionType.cancel => RequestCancelled(),
             DioExceptionType.connectionTimeout => ConnectionTimeOutException(),
