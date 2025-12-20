@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skybase/core/extension/form_state_extension.dart';
 import 'package:skybase/core/helper/dialog_helper.dart';
-import 'package:skybase/core/helper/validator_helper.dart';
+import 'package:skybase/core/helper/validator.dart';
 import 'package:skybase/config/themes/app_colors.dart';
 import 'package:skybase/config/themes/app_style.dart';
 import 'package:skybase/ui/views/login/login_notifier.dart';
@@ -108,11 +109,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                           controller: phoneController,
                           keyboardType: TextInputType.phone,
                           icon: Icons.phone,
-                          validator: (value) => ValidatorHelper.field(
-                            title: 'txt_phone'.tr(),
-                            value: value.toString(),
-                            regex: AppRegex.phone,
-                          ),
+                          validator: Validator.phone(),
                         ),
                         const SizedBox(height: 20),
                         SkyPasswordFormField(
@@ -125,17 +122,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
                             icon: const Icon(Icons.visibility_off),
                             onPressed: () => hidePassword(),
                           ),
-                          validator: (value) => ValidatorHelper.field(
-                            title: 'txt_password'.tr(),
-                            value: value.toString(),
-                            regex: AppRegex.password,
-                          ),
+                          validator: Validator.password(),
                         ),
                         const SizedBox(height: 20),
                         SkyButton(
                           onPressed: () {
                             FocusScope.of(context).unfocus();
-                            if (!ValidatorHelper.validateForm(formKey)) return;
+                            bool isValid = formKey.saveAndValidate();
+                            if (!isValid) return;
                             notifier.login(
                               phoneNumber: phoneController.text,
                               email: emailController.text,
