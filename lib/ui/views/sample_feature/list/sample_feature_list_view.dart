@@ -42,7 +42,7 @@ class _SampleFeatureListViewState extends ConsumerState<SampleFeatureListView>
   bool get wantKeepAlive => true;
 
   Future<void> _fetchPage(int pageKey) async {
-    final notifier = ref.read(sampleFeatureListNotifierProvider.notifier);
+    final notifier = ref.read(sampleFeatureListProvider.notifier);
     try {
       final newItems =
           await notifier.onGetUsers(page: pageKey, perPage: _pageSize);
@@ -66,7 +66,7 @@ class _SampleFeatureListViewState extends ConsumerState<SampleFeatureListView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final notifier = ref.read(sampleFeatureListNotifierProvider.notifier);
+    final notifier = ref.read(sampleFeatureListProvider.notifier);
     final Navigation navigation = ref.read(navigationProvider);
 
     return Scaffold(

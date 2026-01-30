@@ -1,16 +1,11 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:skybase/config/base/navigation.dart';
 import 'package:skybase/core/database/storage/storage_key.dart';
 import 'package:skybase/core/database/storage/storage_manager.dart';
 import 'package:skybase/ui/views/login/login_view.dart';
 
-import 'package:flutter/material.dart';
-
-final introNotifierProvider = StateNotifierProvider<IntroNotifier, IntroState>((ref) {
-  final storage = ref.read(storageManagerProvider);
-  return IntroNotifier(storageManager: storage);
-});
+part 'intro_notifier.g.dart';
 
 class IntroState {
   final int currentIndex;
@@ -35,18 +30,32 @@ class IntroState {
   }
 }
 
-class IntroNotifier extends StateNotifier<IntroState> {
-  final StorageManager storageManager;
+@riverpod
+class IntroNotifier extends _$IntroNotifier {
+  late final StorageManager _storageManager;
+  late final PageController _pageController;
 
-  IntroNotifier({required this.storageManager})
-      : super(IntroState(currentIndex: 0, pageController: PageController(initialPage: 0)));
+  @override
+  IntroState build() {
+    _storageManager = ref.read(storageManagerProvider);
+
+    _pageController = PageController(initialPage: 0);
+    ref.onDispose(() {
+      _pageController.dispose(); // ✅ WAJIB
+    });
+
+    return IntroState(
+      currentIndex: 0,
+      pageController: _pageController,
+    );
+  }
 
   void onChangePage(int index) {
     state = state.copyWith(currentIndex: index);
   }
 
   void onPreviousPage() {
-    state.pageController.previousPage(
+    _pageController.previousPage(
       curve: Curves.easeIn,
       duration: const Duration(milliseconds: 260),
     );
@@ -54,12 +63,12 @@ class IntroNotifier extends StateNotifier<IntroState> {
 
   void onNextPage(BuildContext context, Navigation navigation) {
     if (!state.isLastPage) {
-      state.pageController.nextPage(
+      _pageController.nextPage(
         curve: Curves.easeIn,
         duration: const Duration(milliseconds: 260),
       );
     } else {
-      storageManager.save(StorageKey.FIRST_INSTALL, false);
+      _storageManager.save(StorageKey.FIRST_INSTALL, false);
       navigation.push(context, LoginView.route);
     }
   }

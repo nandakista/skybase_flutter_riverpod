@@ -11,14 +11,14 @@ class ProfileRepositoryView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(profileNotifierRepositoryProvider);
-    final notifier = ref.read(profileNotifierRepositoryProvider.notifier);
+    final state = ref.watch(profileRepositoryProvider);
+    final notifier = ref.read(profileRepositoryProvider.notifier);
 
     return state.when(
       loading: () => const ShimmerSampleFeatureList(),
       error: (err, st) => ErrorView(
         errorTitle: err.toString(),
-        onRetry: () => notifier.onGetRepository(),
+        onRetry: () => notifier.refresh(),
       ),
       data: (repositoryList) => ListView.builder(
         padding: EdgeInsets.zero,

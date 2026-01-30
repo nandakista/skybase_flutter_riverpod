@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skybase/config/themes/theme_manager.dart';
-import 'package:skybase/core/localization/locale_manager.dart';
+import 'package:skybase/core/localization/locale_notifier.dart';
 
 import 'config/auth_manager/auth_manager.dart';
 import 'config/themes/app_theme.dart';
@@ -25,8 +25,8 @@ void main() async {
       ],
       child: Consumer(
         builder: (BuildContext context, WidgetRef ref, Widget? child) {
-          final localeNotifier = ref.read(localeNotifierProvider.notifier);
-          final startLocale = ref.watch(localeNotifierProvider);
+          final localeNotifier = ref.read(localeProvider.notifier);
+          final startLocale = ref.watch(localeProvider);
 
           return EasyLocalization(
             path: 'lib/core/localization/languages',

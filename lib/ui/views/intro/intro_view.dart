@@ -15,8 +15,8 @@ class IntroView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final introState = ref.watch(introNotifierProvider);
-    final notifier = ref.read(introNotifierProvider.notifier);
+    final introState = ref.watch(introProvider);
+    final notifier = ref.read(introProvider.notifier);
     final Navigation navigation = ref.read(navigationProvider);
 
     return Scaffold(

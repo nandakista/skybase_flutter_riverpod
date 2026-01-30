@@ -1,53 +1,54 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import 'package:skybase/config/base/request_param.dart';
 import 'package:skybase/data/models/sample_feature/sample_feature.dart';
 import 'package:skybase/data/repositories/sample_feature/sample_feature_repository.dart';
 
-final userDetailProvider = StateNotifierProvider.family<
-    SampleFeatureDetailNotifier, AsyncValue<SampleFeature>, (int, String)>(
-  (ref, param) {
-    final sampleFeatureRepository = ref.read(sampleFeatureRepositoryProvider);
-    return SampleFeatureDetailNotifier(
-      repository: sampleFeatureRepository,
-      userId: param.$1,
-      username: param.$2,
-    );
-  },
-);
+part 'sample_feature_detail_notifier.g.dart';
 
+@riverpod
 class SampleFeatureDetailNotifier
-    extends StateNotifier<AsyncValue<SampleFeature>> {
-  final SampleFeatureRepository repository;
-  final CancelToken cancelToken = CancelToken();
-  final int userId;
-  final String username;
-
-  SampleFeatureDetailNotifier({
-    required this.userId,
-    required this.username,
-    required this.repository,
-  }) : super(const AsyncLoading()) {
-    onGetDetailUser();
-  }
-
-  Future<void> onGetDetailUser() async {
-    try {
-      state = const AsyncLoading();
-      final response = await repository.getDetailUser(
-        requestParams: RequestParams(cancelToken: cancelToken),
-        id: userId,
-        username: username,
-      );
-      state = AsyncData(response);
-    } catch (e, stackTrace) {
-      state = AsyncError(e, stackTrace);
-    }
-  }
+    extends _$SampleFeatureDetailNotifier {
+  late final SampleFeatureRepository _repository;
+  late final CancelToken _cancelToken;
 
   @override
-  void dispose() {
-    cancelToken.cancel();
-    super.dispose();
+  Future<SampleFeature> build({
+    required int userId,
+    required String username,
+  }) async {
+    _repository = ref.read(sampleFeatureRepositoryProvider);
+    _cancelToken = CancelToken();
+
+    ref.onDispose(() {
+      _cancelToken.cancel();
+    });
+
+    return _getDetailUser(
+      userId: userId,
+      username: username,
+    );
+  }
+
+  Future<SampleFeature> _getDetailUser({
+    required int userId,
+    required String username,
+  }) async {
+    return await _repository.getDetailUser(
+      requestParams: RequestParams(cancelToken: _cancelToken),
+      id: userId,
+      username: username,
+    );
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+          () => _getDetailUser(
+        userId: userId,
+        username: username,
+      ),
+    );
   }
 }

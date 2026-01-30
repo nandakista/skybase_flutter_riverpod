@@ -1,31 +1,33 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:skybase/core/database/storage/storage_key.dart';
 import 'package:skybase/core/database/storage/storage_manager.dart';
 
-final themeManagerProvider = StateNotifierProvider<ThemeManager, bool>((ref) {
-  final storageManager = ref.read(storageManagerProvider);
-  return ThemeManager(storage: storageManager);
-});
+part 'theme_manager.g.dart';
 
-class ThemeManager extends StateNotifier<bool> {
-  final StorageManager storage;
+@riverpod
+class ThemeManager extends _$ThemeManager {
+  late final StorageManager _storage;
 
-  ThemeManager({required this.storage})
-      : super(storage.get<bool?>(StorageKey.IS_DARK_THEME) ?? false);
+  @override
+  bool build() {
+    _storage = ref.read(storageManagerProvider);
+
+    return _storage.get<bool?>(StorageKey.IS_DARK_THEME) ?? false;
+  }
 
   void toDarkMode() {
     state = true;
-    storage.save<bool>(StorageKey.IS_DARK_THEME, state);
+    _storage.save<bool>(StorageKey.IS_DARK_THEME, state);
   }
 
   void toLightMode() {
     state = false;
-    storage.save<bool>(StorageKey.IS_DARK_THEME, state);
+    _storage.save<bool>(StorageKey.IS_DARK_THEME, state);
   }
 
   Future<bool> changeTheme() async {
     state = !state;
-    storage.save<bool>(StorageKey.IS_DARK_THEME, state);
+    _storage.save<bool>(StorageKey.IS_DARK_THEME, state);
     return state;
   }
 }

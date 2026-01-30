@@ -1,47 +1,44 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:skybase/config/themes/theme_manager.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:skybase/config/themes/theme_manager.dart';
+import 'package:skybase/config/base/navigation.dart';
+import 'package:skybase/core/database/storage/cache_data.dart';
 import 'package:skybase/core/database/storage/storage_key.dart';
 import 'package:skybase/core/database/storage/storage_manager.dart';
 import 'package:skybase/core/database/secure_storage/secure_storage_manager.dart';
-import 'package:skybase/core/database/storage/cache_data.dart';
 import 'package:skybase/data/models/user/user.dart';
-import 'package:skybase/config/base/navigation.dart';
 import 'package:skybase/ui/views/intro/intro_view.dart';
 import 'package:skybase/ui/views/login/login_view.dart';
 import 'package:skybase/ui/views/main_navigation/main_nav_view.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final authManagerProvider = StateNotifierProvider<AuthManager, AppType>((ref) {
-  final themeManager = ref.read(themeManagerProvider.notifier);
-  final storageManager = ref.read(storageManagerProvider);
-  final secureStorage = ref.read(secureStorageManagerProvider);
-  final navigation = ref.read(navigationProvider);
-  return AuthManager(
-    storage: storageManager,
-    secureStorage: secureStorage,
-    themeManager: themeManager,
-    navigation: navigation,
-  );
-});
+part 'auth_manager.g.dart';
 
-enum AppType { INITIAL, FIRST_INSTALL, UNAUTHENTICATED, AUTHENTICATED }
+enum AppType {
+  INITIAL,
+  FIRST_INSTALL,
+  UNAUTHENTICATED,
+  AUTHENTICATED,
+}
 
-class AuthManager extends StateNotifier<AppType> {
-  final StorageManager storage;
-  final SecureStorageManager secureStorage;
-  final ThemeManager themeManager;
-  final Navigation navigation;
+@riverpod
+class AuthManager extends _$AuthManager {
+  late final StorageManager _storage;
+  late final SecureStorageManager _secureStorage;
+  late final ThemeManager _themeManager;
+  late final Navigation _navigation;
 
-  AuthManager({
-    required this.storage,
-    required this.secureStorage,
-    required this.themeManager,
-    required this.navigation,
-  }) : super(AppType.INITIAL) {
+  @override
+  AppType build() {
+    _storage = ref.read(storageManagerProvider);
+    _secureStorage = ref.read(secureStorageManagerProvider);
+    _themeManager = ref.read(themeManagerProvider.notifier);
+    _navigation = ref.read(navigationProvider);
+
     _init();
+    return AppType.INITIAL;
   }
 
   Future<void> _init() async {
@@ -56,7 +53,7 @@ class AuthManager extends StateNotifier<AppType> {
 
   Future<void> clearExpiredCache() async {
     await Future.wait(
-      storage.sharedPreferences.getKeys().map((key) async {
+      _storage.sharedPreferences.getKeys().map((key) async {
         List<String> permanentKeys = [
           StorageKey.FIRST_INSTALL,
           StorageKey.CURRENT_LOCALE,
@@ -66,46 +63,49 @@ class AuthManager extends StateNotifier<AppType> {
 
         if (!permanentKeys.contains(key)) {
           final now = DateTime.now();
-          dynamic storageItem = await storage.get(key);
+          dynamic storageItem = await _storage.get(key);
           CacheData cacheData = CacheData.fromJson(jsonDecode(storageItem));
-          if (cacheData.expiredDate.isBefore(now)) await storage.delete(key);
+          if (cacheData.expiredDate.isBefore(now)) await _storage.delete(key);
         }
       }),
     );
   }
 
-  void checkFirstInstall() async {
+  Future<void> checkFirstInstall() async {
     final bool isFirstInstall =
-        await storage.get(StorageKey.FIRST_INSTALL) ?? true;
+        await _storage.get(StorageKey.FIRST_INSTALL) ?? true;
+
     if (isFirstInstall) {
-      await secureStorage.setToken(value: '');
+      await _secureStorage.setToken(value: '');
       state = AppType.FIRST_INSTALL;
     } else {
-      checkUser();
+      await checkUser();
     }
   }
 
   Future<void> checkAppTheme() async {
     final bool isDarkTheme =
-        await storage.get(StorageKey.IS_DARK_THEME) ?? false;
+        await _storage.get(StorageKey.IS_DARK_THEME) ?? false;
+
     if (isDarkTheme) {
-      themeManager.toDarkMode();
+      _themeManager.toDarkMode();
     } else {
-      themeManager.toLightMode();
+      _themeManager.toLightMode();
     }
   }
 
   Future<void> checkUser() async {
-    final String? token = await secureStorage.getToken();
+    final token = await _secureStorage.getToken();
+
     if (token != null && token.isNotEmpty) {
       setAuth();
     } else {
-      logout();
+      await logout();
     }
   }
 
-  void setAuth() async {
-    if (await secureStorage.isLoggedIn()) {
+  Future<void> setAuth() async {
+    if (await _secureStorage.isLoggedIn()) {
       state = AppType.AUTHENTICATED;
     }
   }
@@ -116,8 +116,8 @@ class AuthManager extends StateNotifier<AppType> {
   }
 
   Future<void> clearData() async {
-    await secureStorage.logout();
-    await storage.logout();
+    await _secureStorage.logout();
+    await _storage.logout();
   }
 
   Future<void> login({
@@ -125,8 +125,12 @@ class AuthManager extends StateNotifier<AppType> {
     required String token,
     required String refreshToken,
   }) async {
-    await saveAuthData(user: user, token: token, refreshToken: refreshToken);
-    setAuth();
+    await saveAuthData(
+      user: user,
+      token: token,
+      refreshToken: refreshToken,
+    );
+    await setAuth();
   }
 
   Future<void> saveAuthData({
@@ -135,22 +139,24 @@ class AuthManager extends StateNotifier<AppType> {
     required String refreshToken,
   }) async {
     await saveUserData(user: user);
-    await secureStorage.setToken(value: token);
-    await secureStorage.setRefreshToken(value: refreshToken);
+    await _secureStorage.setToken(value: token);
+    await _secureStorage.setRefreshToken(value: refreshToken);
   }
 
   Future<void> saveUserData({required User user}) async {
-    await storage.save<String>(StorageKey.USERS, jsonEncode(user.toJson()));
+    await _storage.save<String>(
+      StorageKey.USERS,
+      jsonEncode(user.toJson()),
+    );
   }
 
   User? get user {
-    if (storage.has(StorageKey.USERS)) {
+    if (_storage.has(StorageKey.USERS)) {
       return User.fromJson(
-        jsonDecode(storage.get<String>(StorageKey.USERS)),
+        jsonDecode(_storage.get<String>(StorageKey.USERS)),
       );
-    } else {
-      return null;
     }
+    return null;
   }
 
   void onAuthChanged(AppType state) {
@@ -158,13 +164,13 @@ class AuthManager extends StateNotifier<AppType> {
       case AppType.INITIAL:
         break;
       case AppType.FIRST_INSTALL:
-        navigation.pushAllReplacementNoContext(IntroView.route);
+        _navigation.pushAllReplacementNoContext(IntroView.route);
         break;
       case AppType.UNAUTHENTICATED:
-        navigation.pushAllReplacementNoContext(LoginView.route);
+        _navigation.pushAllReplacementNoContext(LoginView.route);
         break;
       case AppType.AUTHENTICATED:
-        navigation.pushAllReplacementNoContext(MainNavView.route);
+        _navigation.pushAllReplacementNoContext(MainNavView.route);
         break;
     }
   }

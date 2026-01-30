@@ -18,8 +18,8 @@ class ProfileView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(profileNotifierProvider);
-    final notifier = ref.read(profileNotifierProvider.notifier);
+    final state = ref.watch(profileProvider);
+    final notifier = ref.read(profileProvider.notifier);
     final Navigation navigation = ref.read(navigationProvider);
 
     return Scaffold(
@@ -42,13 +42,13 @@ class ProfileView extends ConsumerWidget {
           loading: () => PlatformLoadingIndicator(),
           error: (err, st) => ErrorView(
             errorTitle: err.toString(),
-            onRetry: () => notifier.onGetProfile(),
+            onRetry: () => notifier.refresh(),
           ),
           data: (user) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: RefreshIndicator(
               onRefresh: () async {
-                await notifier.onGetProfile();
+                await notifier.refresh();
               },
               child: SingleChildScrollView(
                 child: Column(
@@ -126,92 +126,6 @@ class ProfileView extends ConsumerWidget {
             ),
           ),
         )
-        // body: Consumer<ProfileNotifier>(
-        //   builder: (context, notifier, child) {
-        //     return StateView.page(
-        //       loadingEnabled: notifier.isLoading,
-        //       errorEnabled: notifier.isError,
-        //       emptyEnabled: false,
-        //       errorTitle: notifier.errorMessage,
-        //       onRetry: () => notifier.onRefresh(context),
-        //       onRefresh: () => notifier.onRefresh(context),
-        //       child: Padding(
-        //         padding: const EdgeInsets.symmetric(horizontal: 24),
-        //         child: Column(
-        //           children: [
-        //             SkyImage(
-        //               shapeImage: ShapeImage.circle,
-        //               size: 40,
-        //               src: '${notifier.dataObj?.avatarUrl}&s=200',
-        //             ),
-        //             const SizedBox(height: 12),
-        //             Text(
-        //               notifier.dataObj?.name ?? '--',
-        //               style: AppStyle.headline3,
-        //             ),
-        //             Text(notifier.dataObj?.bio ?? '--'),
-        //             const SizedBox(height: 24),
-        //             Row(
-        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //               children: [
-        //                 Column(
-        //                   children: [
-        //                     Text(
-        //                       '${notifier.dataObj?.repository ?? 0}',
-        //                       style: AppStyle.headline3,
-        //                     ),
-        //                     const Text('Repository'),
-        //                   ],
-        //                 ),
-        //                 Column(
-        //                   children: [
-        //                     Text(
-        //                       '${notifier.dataObj?.followers ?? 0}',
-        //                       style: AppStyle.headline3,
-        //                     ),
-        //                     const Text('Follower'),
-        //                   ],
-        //                 ),
-        //                 Column(
-        //                   children: [
-        //                     Text(
-        //                       '${notifier.dataObj?.following ?? 0}',
-        //                       style: AppStyle.headline3,
-        //                     ),
-        //                     const Text('Following'),
-        //                   ],
-        //                 ),
-        //               ],
-        //             ),
-        //             const SizedBox(height: 24),
-        //             Row(
-        //               children: [
-        //                 const Icon(Icons.location_city),
-        //                 Text(' ${notifier.dataObj?.company ?? '--'}'),
-        //               ],
-        //             ),
-        //             Row(
-        //               children: [
-        //                 const Icon(Icons.location_on),
-        //                 Text(' ${notifier.dataObj?.location ?? '--'}'),
-        //               ],
-        //             ),
-        //             const SizedBox(height: 8),
-        //             const Divider(color: Colors.black38),
-        //             Row(
-        //               children: [
-        //                 Text('Repository List', style: AppStyle.headline3),
-        //               ],
-        //             ),
-        //             const SizedBox(height: 12),
-        //             const ProfileRepositoryView(),
-        //             const SizedBox(height: 12),
-        //           ],
-        //         ),
-        //       ),
-        //     );
-        //   }
-        // ),
         );
   }
 }

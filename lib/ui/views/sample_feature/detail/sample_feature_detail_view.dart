@@ -22,9 +22,17 @@ class SampleFeatureDetailView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(userDetailProvider((userId, usernameArgs)));
-    final notifier =
-        ref.read(userDetailProvider((userId, usernameArgs)).notifier);
+    final state = ref.watch(
+      sampleFeatureDetailProvider(
+        userId: userId,
+        username: usernameArgs,
+      ),
+    );
+
+    final notifier = ref.read(sampleFeatureDetailProvider(
+      userId: userId,
+      username: usernameArgs,
+    ).notifier);
 
     return Scaffold(
       appBar: SkyAppBar.primary(title: usernameArgs),
@@ -33,24 +41,26 @@ class SampleFeatureDetailView extends ConsumerWidget {
           loading: () => const ShimmerSampleFeatureDetail(),
           error: (err, st) => ErrorView(
             errorTitle: err.toString(),
-            onRetry: () => notifier.onGetDetailUser(),
+            onRetry: () => notifier.refresh(),
           ),
-          data: (user) => Column(
-            children: [
-              SampleFeatureDetailHeader(
-                avatar: user.avatarUrl ?? '',
-                repositoryCount: user.repository ?? 0,
-                followerCount: user.followers ?? 0,
-                followingCount: user.following ?? 0,
-              ),
-              SampleFeatureDetailInfo(
-                name: user.name ?? '',
-                bio: user.bio ?? '',
-                company: user.company ?? '',
-                location: user.location ?? '',
-              ),
-              SampleFeatureDetailTab(data: user),
-            ],
+          data: (user) => SingleChildScrollView(
+            child: Column(
+              children: [
+                SampleFeatureDetailHeader(
+                  avatar: user.avatarUrl ?? '',
+                  repositoryCount: user.repository ?? 0,
+                  followerCount: user.followers ?? 0,
+                  followingCount: user.following ?? 0,
+                ),
+                SampleFeatureDetailInfo(
+                  name: user.name ?? '',
+                  bio: user.bio ?? '',
+                  company: user.company ?? '',
+                  location: user.location ?? '',
+                ),
+                SampleFeatureDetailTab(data: user),
+              ],
+            ),
           ),
         ),
       ),
