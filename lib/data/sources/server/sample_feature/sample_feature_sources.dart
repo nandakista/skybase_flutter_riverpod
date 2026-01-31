@@ -1,17 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:skybase/config/network/api_request.dart';
 import 'package:skybase/data/models/repo/repo.dart';
 import 'package:skybase/data/models/sample_feature/sample_feature.dart';
 import 'package:skybase/data/sources/server/sample_feature/sample_feature_sources_impl.dart';
-
-import '../../../../config/network/api_request.dart';
-
-// final sampleFeatureSourcesProvider =
-// Provider<SampleFeatureSources>((ref) {
-//   final apiRequest = ref.read(apiRequestProvider);
-//   return SampleFeatureSourcesImpl(apiRequest: apiRequest);
-// });
 
 part 'sample_feature_sources.g.dart';
 
